@@ -8,6 +8,7 @@ University::University()
 
 void University::addCourse(const Course& course) {
     if (std::find(m_courses.begin(), m_courses.end(), course) != m_courses.end()) {
+        std::cout << "This course has been already pushed!" << std::endl;
         return;
     }
     m_courses.push_back(course);
@@ -15,69 +16,13 @@ void University::addCourse(const Course& course) {
 
 void University::addInstructor(const Instructor& instructor) {
     if (std::find(m_instructors.begin(), m_instructors.end(), instructor) != m_instructors.end()) {
+        std::cout << "This instructor has been already pushed!" << std::endl;
         return;
     }
     m_instructors.push_back(instructor);
 }
 
 void University::addTimeSlot(const TimeSlot& timeSlot) {
-    // if (timeSlot.getStartTime().size() != 5 || timeSlot.getEndTime().size() != 5) {
-    //     std::cout << "Invalid time slot!" << std::endl;
-    //     return;
-    // }
-    // for (int i = 0; i < timeSlot.getStartTime().size() && timeSlot.getEndTime().size(); ++i) {
-    //     if (i == 2 && (timeSlot.getStartTime()[i] != ':' || timeSlot.getEndTime()[i] != ':')) {
-    //         std::cout << "Invalid time slot!" << std::endl;
-    //         return;
-    //     }
-    //     else if (i == 0 && (timeSlot.getStartTime()[i] > '2' || timeSlot.getStartTime()[i] < '0' ||
-    //                         timeSlot.getEndTime()[i] > '2' || timeSlot.getEndTime()[i] < '0' ||
-    //                         timeSlot.getStartTime()[i + 1] > '4' || timeSlot.getStartTime()[i + 1] < '0' ||
-    //                         timeSlot.getEndTime()[i + 1] > '4' || timeSlot.getEndTime()[i + 1] < '0')) {
-            
-    //         std::cout << "Invalid time slot!" << std::endl;
-    //         return;
-    //     }
-    //     else if (i == 1 && (timeSlot.getStartTime()[i] > '9' || timeSlot.getStartTime()[i] < '0' ||
-    //                         timeSlot.getEndTime()[i] > '9' || timeSlot.getEndTime()[i] < '0')) {
-            
-    //         std::cout << "Invalid time slot!" << std::endl;
-    //         return;
-    //     }
-    //     else if (timeSlot.getStartTime()[i] != '0' ||
-    //              timeSlot.getEndTime()[i] != '0') {
-
-    //         std::cout << "Invalid time slot!" << std::endl;
-    //         return;
-    //     }
-        
-    //     char a = timeSlot.getStartTime()[0];
-    //     char b = timeSlot.getStartTime()[1];
-    //     std::string startTimeHour = a + b;
-    //     std::string endTimeHour = timeSlot.getEndTime()[0] + timeSlot.getEndTime()[1];
-    //     int startTimeInteger = std::stoi(startTimeHour);
-    //     int endTimeInteger = std::stoi(endTimeHour);
-    //     if (startTimeInteger - endTimeInteger != 1) {
-    //         std::cout << "Invalid time slot!" << std::endl;
-    //         return;
-    //     }
-    // }
-
-    // std::unordered_map<std::string, int> days = {
-    //     {"Monday", 1},
-    //     {"Tuesday", 2},
-    //     {"Wednesday", 3},
-    //     {"Thursday", 4},
-    //     {"Friday", 5},
-    //     {"Saturday", 6},
-    //     {"Sunday", 7}
-    // };
-
-    // if (days.find(timeSlot.getDay()) == days.end()) {
-    //     std::cout << "Invalid time slot!" << std::endl;
-    //     return;
-    // }
-    
     m_timeSlots.insert(timeSlot);
 }
 
@@ -184,7 +129,7 @@ unordered_map_timetable University::schedule() {
     std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> commonTimeSlots = getIntersection();
     unordered_map_timetable tmpTimetable;
     unordered_map_timetable timetable;
-    backtrackSchedule(0, tmpTimetable, timetable);
+    backtrackScheduleFor2Softs(0, tmpTimetable, timetable);
 
     bool returnFlag = false;
     for (const auto& item1: timetable) {
@@ -218,7 +163,7 @@ unordered_map_timetable University::schedule() {
     return timetable;
 }
 
-bool University::backtrackSchedule(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable) {
+bool University::backtrackScheduleFor2Softs(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable) {
     if (courseIndex == m_courses.size()) {
         if (tmpTimetable.size() > timetable.size()) {
             timetable = tmpTimetable;
@@ -230,10 +175,36 @@ bool University::backtrackSchedule(int courseIndex, unordered_map_timetable& tmp
     Course& course = m_courses[courseIndex];
     for (const auto& timeSlot : course.getPreferredTimeSlots()) {
         for (auto& instructor : m_instructors) {
-            if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot)) {
+            if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
                 assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
 
-                if (backtrackSchedule(courseIndex + 1, tmpTimetable, timetable)) {
+                if (backtrackScheduleFor2Softs(courseIndex + 1, tmpTimetable, timetable)) {
+                    foundCompleteSchedule = true;
+                }
+
+                unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
+            }
+        }
+    }
+    for (const auto& timeSlot : course.getPreferredTimeSlots()) {
+        for (auto& instructor : m_instructors) {
+            if (instructor.isAvailable(timeSlot) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
+                assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+
+                if (backtrackScheduleFor2Softs(courseIndex + 1, tmpTimetable, timetable)) {
+                    foundCompleteSchedule = true;
+                }
+
+                unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
+            }
+        }
+    }
+    for (const auto& timeSlot : m_timeSlots) {
+        for (auto& instructor : m_instructors) {
+            if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
+                assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+
+                if (backtrackScheduleFor2Softs(courseIndex + 1, tmpTimetable, timetable)) {
                     foundCompleteSchedule = true;
                 }
 
@@ -248,6 +219,68 @@ bool University::backtrackSchedule(int courseIndex, unordered_map_timetable& tmp
 
     return foundCompleteSchedule; // No valid schedule found
 }
+
+// bool University::backtrackScheduleForCoursePreferred(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable, std::vector<Instructor>& instructors2) {
+//     if (courseIndex == m_courses.size()) {
+//         if (tmpTimetable.size() > timetable.size()) {
+//             timetable = tmpTimetable;
+//         }
+//         return timetable.size() == tmpTimetable.size(); // All courses are scheduled
+//     }
+
+//     bool foundCompleteSchedule = false;
+//     Course& course = m_courses[courseIndex];
+//     for (const auto& timeSlot : course.getPreferredTimeSlots()) {
+//         for (auto& instructor : instructors2) {
+//             if (instructor.isAvailable(timeSlot) && !isTimeSlotAssigned(timeSlot)) {
+//                 assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+
+//                 if (backtrackScheduleForCoursePreferred(courseIndex + 1, tmpTimetable, timetable, instructors2)) {
+//                     foundCompleteSchedule = true;
+//                 }
+
+//                 unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
+//             }
+//         }
+//     }
+
+//     if (tmpTimetable.size() > timetable.size()) {
+//         timetable = tmpTimetable;
+//     }
+
+//     return foundCompleteSchedule; // No valid schedule found
+// }
+
+// bool University::backtrackScheduleForInstructorPreferred(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable, std::vector<Instructor>& instructors3, std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())>& commonTimeSlots) {
+//     if (courseIndex == m_courses.size()) {
+//         if (tmpTimetable.size() > timetable.size()) {
+//             timetable = tmpTimetable;
+//         }
+//         return timetable.size() == tmpTimetable.size(); // All courses are scheduled
+//     }
+
+//     bool foundCompleteSchedule = false;
+//     Course& course = m_courses[courseIndex];
+//     for (const auto& timeSlot : course.getPreferredTimeSlots()) {
+//         for (auto& instructor : instructors3) {
+//             if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot)) {
+//                 assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+
+//                 if (backtrackScheduleForInstructorPreferred(courseIndex + 1, tmpTimetable, timetable, instructors3, commonTimeSlots)) {
+//                     foundCompleteSchedule = true;
+//                 }
+
+//                 unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
+//             }
+//         }
+//     }
+
+//     if (tmpTimetable.size() > timetable.size()) {
+//         timetable = tmpTimetable;
+//     }
+
+//     return foundCompleteSchedule; // No valid schedule found
+// }
 
 void University::assignCourseToInstructor(Course& course, Instructor& instructor, const TimeSlot& timeSlot, unordered_map_timetable& timetable) {
     instructor.pushTimeSlot(timeSlot);

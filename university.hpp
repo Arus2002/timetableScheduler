@@ -33,12 +33,14 @@ public:
 
 private:
     std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> getIntersection() const;
-    bool backtrackSchedule(int courseIndex, unordered_map_timetable& timetable, unordered_map_timetable& tmpTimetable);
+    bool backtrackScheduleFor2Softs(int courseIndex, unordered_map_timetable& timetable, unordered_map_timetable& tmpTimetable);
+    // bool backtrackScheduleForCoursePreferred(int courseIndex, unordered_map_timetable& timetable, unordered_map_timetable& tmpTimetable,  std::vector<Instructor>& instructors2);
+    // bool backtrackScheduleForInstructorPreferred(int courseIndex, unordered_map_timetable& timetable, unordered_map_timetable& tmpTimetable,  std::vector<Instructor>& instructors3, std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())>& commonTimeSlots);
     void assignCourseToInstructor(Course& course, Instructor& instructor, const TimeSlot& timeSlot, unordered_map_timetable& timetable);
     void unassignCourseFromInstructor(Course& course, Instructor& instructor, const TimeSlot& timeSlot, unordered_map_timetable& timetable);
     bool isTimeSlotAssigned(const TimeSlot& timeSlot) const;
-    void optimizePreferredTimeSlots();
-    void optimizePreferredCourses();
+    // void optimizePreferredTimeSlots();
+    // void optimizePreferredCourses();
     
 private:
     std::unordered_set<TimeSlot, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> m_timeSlots;

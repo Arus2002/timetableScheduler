@@ -11,6 +11,7 @@ public:
     std::string getEndTime() const;
     std::string getDay() const;
     bool operator==(const TimeSlot& other) const;
+    void timeSlotChecker() const;
 
 private:
     std::string m_day;

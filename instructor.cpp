@@ -1,9 +1,13 @@
 #include "instructor.hpp"
+#include <unordered_map>
 
 Instructor::Instructor(const std::string& name, const std::vector<TimeSlot>& availability, const std::vector<Course>& preferredCourses)
     : m_name{name}
     , m_availability{availability}
-    , m_preferredCourses{preferredCourses} {}
+    , m_preferredCourses{preferredCourses} 
+{
+    //stugel vor dubliatner chlini courseri
+}
 
 void Instructor::displayInfo() const {
     std::cout << "Instructor name: " << m_name << std::endl;

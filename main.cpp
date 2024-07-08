@@ -1,33 +1,36 @@
 #include "university.hpp"
 
 int main() {
-   // Create some time slots
-    TimeSlot slot1("Monday", "09:00", "10:00");
-    TimeSlot slot2("Monday", "10:00", "11:00");
-    TimeSlot slot3("Tuesday", "09:00", "10:00");
+    TimeSlot timeSlot1("Monday", "09:00", "10:30");
+    TimeSlot timeSlot2("Monday", "11:00", "12:30");
+    TimeSlot timeSlot3("Wednesday", "09:00", "10:30");
+    TimeSlot timeSlot4("Wednesday", "11:00", "12:30");
+    TimeSlot timeSlot5("Friday", "11:30", "13:00");
 
-    // Create some courses
-    Course course1("Math", {slot1, slot2});
-    Course course2("Physics", {slot3});
-    Course course3("Chemistry", {slot1, slot3});
+    Course course1("Math", {timeSlot3, timeSlot1, timeSlot5});
+    Course course2("Physics", {timeSlot2, timeSlot4});
+    Course course3("Chemistry", {timeSlot1, timeSlot4});
+    Course course4("Biology", {timeSlot2, timeSlot3});
+    Course course5("History", {timeSlot3});
 
-    // Create some instructors
-    Instructor instructor1("Dr. Smith", {slot1, slot2}, {course1, course2});
-    Instructor instructor2("Dr. Johnson", {slot2, slot3}, {course2, course3});
+    Instructor instructor1("Alice", {timeSlot1, timeSlot2, timeSlot3}, {course1, course2});
+    Instructor instructor2("Bob", {timeSlot1, timeSlot2, timeSlot4}, {course2, course3});
+    Instructor instructor3("Carol", {timeSlot3, timeSlot4}, {course4});
 
-    // Create a university and add the entities
     University university;
-    university.addCourse(course1);
     university.addCourse(course2);
     university.addCourse(course3);
-
+    university.addCourse(course4);
+    university.addCourse(course1);
+    university.addCourse(course5);
     university.addInstructor(instructor1);
     university.addInstructor(instructor2);
-
-    university.addTimeSlot(slot1);
-    university.addTimeSlot(slot2);
-    university.addTimeSlot(slot3);
-
+    university.addInstructor(instructor3);
+    university.addTimeSlot(timeSlot1);
+    university.addTimeSlot(timeSlot2);
+    university.addTimeSlot(timeSlot3);
+    university.addTimeSlot(timeSlot4);
+    
     std::unordered_map<Course, std::pair<TimeSlot, Instructor>, decltype(CourseHash()), decltype(CourseEqual())> timetable = university.schedule();
     if (!timetable.empty()) {
             std::cout << "Schedule created successfully!" << std::endl;
@@ -43,6 +46,3 @@ int main() {
 
     return 0;
 }
-
-//insturctorinel petqa pahem
-//ete unem hatvox jamer instructori hamar (09:00 - 10:30 ev 09:30-11:00 lara lini menak vory vor vercnum enq iranic 1 u kes jam hetoyva jamy) petqa vercnel ayn vory ka time_sloteri listum 
