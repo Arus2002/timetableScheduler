@@ -10,9 +10,20 @@ public:
     void displayInfo() const;
     std::string getName() const;
     std::vector<TimeSlot> getPreferredTimeSlots() const;
-    void setPreferredTimeSlots(const std::vector<TimeSlot>& timeSlots);
     
+public: //json functions
+    json serializeToJson() const;
+    static Course deserializeFromJson(const json& courseJson, const std::vector<TimeSlot>& timeSlots);
+
 private:
     std::string m_courseName;
     std::vector<TimeSlot> m_preferredTimeSlots;
+};
+
+struct CourseHash {
+    std::size_t operator()(const Course& course) const;
+};
+
+struct CourseEqual {
+    bool operator()(const Course& lhs, const Course& rhs) const;
 };

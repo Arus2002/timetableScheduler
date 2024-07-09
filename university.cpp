@@ -1,5 +1,9 @@
+#ifndef UNIVERSITY_HPP
+#define UNIVERSITY_HPP
+
 #include "university.hpp"
 #include <algorithm>
+#include <fstream>
 
 University::University() 
     : m_timeSlots{0, TimeSlotHash(), TimeSlotEqual()}
@@ -8,7 +12,7 @@ University::University()
 
 void University::addCourse(const Course& course) {
     if (std::find(m_courses.begin(), m_courses.end(), course) != m_courses.end()) {
-        std::cout << "This course has been already pushed!" << std::endl;
+        std::cout << "This course has been already pushed!" << course.getName() << std::endl;
         return;
     }
     m_courses.push_back(course);
@@ -16,100 +20,20 @@ void University::addCourse(const Course& course) {
 
 void University::addInstructor(const Instructor& instructor) {
     if (std::find(m_instructors.begin(), m_instructors.end(), instructor) != m_instructors.end()) {
-        std::cout << "This instructor has been already pushed!" << std::endl;
+        std::cout << "This instructor has been already pushed!" << instructor.getName() << std::endl;
         return;
     }
     m_instructors.push_back(instructor);
 }
 
 void University::addTimeSlot(const TimeSlot& timeSlot) {
+    if (m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
+        std::cout << "This time slot has been already pushed!";
+        timeSlot.displayInfo();
+        return;
+    }
     m_timeSlots.insert(timeSlot);
 }
-
-std::size_t TimeSlotHash::operator()(const TimeSlot& s) const {
-    std::size_t h1 = std::hash<std::string>()(s.getStartTime());
-    std::size_t h2 = std::hash<std::string>()(s.getEndTime());
-    std::size_t h3 = std::hash<std::string>()(s.getDay());
-
-    return h1 ^ (h2 << 1) ^ (h3 << 2);
-}
-
-bool TimeSlotEqual::operator()(const TimeSlot& lhs, const TimeSlot& rhs) const {
-    return lhs == rhs;
-}
-
-std::size_t CourseHash::operator()(const Course& course) const {
-    std::size_t h1 = std::hash<std::string>()(course.getName());
-    return h1;
-}
-
-bool CourseEqual::operator()(const Course& lhs, const Course& rhs) const {
-    return lhs.getName() == rhs.getName();
-}
-
-// void University::optimizePreferredTimeSlots() {
-//     std::unordered_map<TimeSlot, int, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> count;
-//     for (auto& course: m_courses) {
-//         std::vector<TimeSlot> coursePreferredTimeSlots = course.getPreferredTimeSlots();
-//         std::size_t size = coursePreferredTimeSlots.size();
-//         for (int i = 0; i < size; ++i) {
-//             ++count[coursePreferredTimeSlots[i]];
-//         }
-//     }
-//     for (auto& course: m_courses) {
-//         std::vector<TimeSlot> coursePreferredTimeSlots = course.getPreferredTimeSlots();
-//         std::size_t size = coursePreferredTimeSlots.size();
-//         //if course has 1 preferred course it can't help to optimize more
-//         if (coursePreferredTimeSlots.size() == 1) {
-//             continue;
-//         }
-//         //if has 2 and more than we can take 1 of them so that the others will have preferred too
-//         for (int i = coursePreferredTimeSlots.size() - 1; i > 0; --i) {
-//             if (count[coursePreferredTimeSlots[i]] > 1) {
-//                 coursePreferredTimeSlots.pop_back();
-//                 --count[coursePreferredTimeSlots[i]];
-//             }
-//             else {
-//                 std::swap(coursePreferredTimeSlots[i], coursePreferredTimeSlots[0]);
-//             }
-//         }
-//         if (size != coursePreferredTimeSlots.size()) {
-//             course.setPreferredTimeSlots(coursePreferredTimeSlots);
-//         }
-//     }
-// }
-
-// void University::optimizePreferredCourses() {
-//     std::unordered_map<Course, int, decltype(CourseHash()), decltype(CourseEqual())> count;
-//     for (auto& instructor: m_instructors) {
-//         std::vector<Course> insturctorPreferredCourses = instructor.getPreferredCourses();
-//         std::size_t size = insturctorPreferredCourses.size();
-//         for (int i = 0; i < size; ++i) {
-//             ++count[insturctorPreferredCourses[i]];
-//         }
-//     }
-//     for (auto& instructor: m_instructors) {
-//         std::vector<Course> insturctorPreferredCourses = instructor.getPreferredCourses();
-//         std::size_t size = insturctorPreferredCourses.size();
-//         //if course has 1 preferred course it can't help to optimize more
-//         if (insturctorPreferredCourses.size() == 1) {
-//             continue;
-//         }
-//         //if has 2 and more than we can take 1 of them so that the others will have preferred too
-//         for (int i = insturctorPreferredCourses.size() - 1; i > 0; --i) {
-//             if (count[insturctorPreferredCourses[i]] > 1) {
-//                 insturctorPreferredCourses.pop_back();
-//                 --count[insturctorPreferredCourses[i]];
-//             }
-//             else {
-//                 std::swap(insturctorPreferredCourses[i], insturctorPreferredCourses[0]);
-//             }
-//         }
-//         if (size != insturctorPreferredCourses.size()) {
-//             instructor.setPreferredCourses(insturctorPreferredCourses);
-//         }
-//     }
-// }
 
 std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> University::getIntersection() const {
     std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> commonTimeSlots;
@@ -125,11 +49,6 @@ std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(Time
     return commonTimeSlots;
 }
 
-void University::optimizeCourses() {
-    std::sort(m_courses.begin(), m_courses.end(), [](const Course& c1, const Course& c2) {
-        return c1.getPreferredTimeSlots().size() < c2.getPreferredTimeSlots().size();});
-}
-
 unordered_map_timetable University::schedule() {
     std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> commonTimeSlots = getIntersection();
     unordered_map_timetable tmpTimetable;
@@ -138,22 +57,14 @@ unordered_map_timetable University::schedule() {
     optimizeCourses();
     backtrackSchedule(index , tmpTimetable, timetable, commonTimeSlots);
 
-    bool returnFlag = false;
     for (const auto& item1: timetable) {
         for (auto item2 = commonTimeSlots.begin(); item2 != commonTimeSlots.end(); ) {
             if (item2->first == item1.second.first) {
                 item2 = commonTimeSlots.erase(item2);
-                if (item2 == commonTimeSlots.end()) {
-                    returnFlag = true;
-                    break;
-                }
             }
             else {
                 ++item2;
             }
-        }
-        if (returnFlag) {
-            break;
         }
     }
 
@@ -197,7 +108,8 @@ bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timeta
         for (const auto& timeSlot : course.getPreferredTimeSlots()) {
             for (auto& instructor : m_instructors) {
                 if (instructor.isAvailable(timeSlot) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
-                    assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+                    assignCourseToInstructor(course
+                    , instructor, timeSlot, tmpTimetable);
 
                     if (backtrackSchedule(courseIndex + 1, tmpTimetable, timetable, commonTimeSlots)) {
                         foundCompleteSchedule = true;
@@ -232,22 +144,89 @@ bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timeta
 }
 
 void University::assignCourseToInstructor(Course& course, Instructor& instructor, const TimeSlot& timeSlot, unordered_map_timetable& timetable) {
-    instructor.pushTimeSlot(timeSlot);
+    m_assignedTimeSlots.insert(timeSlot);
     timetable[course] = {timeSlot, instructor};
 }
 
 void University::unassignCourseFromInstructor(Course& course, Instructor& instructor, const TimeSlot& timeSlot, unordered_map_timetable& timetable) {
-    instructor.popTimeSlot();
+    m_assignedTimeSlots.erase(timeSlot);
     timetable.erase(course);
 }
 
 bool University::isTimeSlotAssigned(const TimeSlot& timeSlot) const {
-    for (const auto& instructor : m_instructors) {
-        for (const auto& assignedSlot : instructor.getAssignedTimeSlots()) {
-            if (assignedSlot == timeSlot) {
-                return true;
-            }
+    for (const auto& assignedSlot: m_assignedTimeSlots) {
+        if (assignedSlot == timeSlot) {
+            return true;
         }
     }
     return false;
 }
+
+void University::optimizeCourses() {
+    std::sort(m_courses.begin(), m_courses.end(), [](const Course& c1, const Course& c2) {
+        return c1.getPreferredTimeSlots().size() < c2.getPreferredTimeSlots().size();});
+}
+
+std::string University::saveState() const {
+    json universityJson;
+        
+    for (const auto& course : m_courses) {
+        universityJson["m_courses"].push_back(course.serializeToJson());
+    }
+    for (const auto& instructor : m_instructors) {
+        universityJson["m_instructors"].push_back(instructor.serializeToJson());
+    }
+    for (const auto& timeSlot : m_timeSlots) {
+        universityJson["m_timeSlots"].push_back(timeSlot.serializeToJson());
+    }
+    
+    std::string filename;
+    std::cout << "Please input filenmae" << std::endl;
+    std::cin >> filename;
+    std::ofstream file(filename);
+    file << universityJson.dump(4);
+    file.close();
+    return filename;
+}
+
+void University::loadState(const std::string& filename) {
+    m_instructors.clear();
+    m_timeSlots.clear();
+    m_courses.clear();
+    std::ifstream file(filename);
+    json universityJson;
+    file >> universityJson;
+    file.close();
+    
+    for (const auto& courseJson : universityJson["m_courses"]) {
+        std::vector<TimeSlot> timeSlots;
+        for (const auto& timeSlotJson : courseJson["m_preferredTimeSlots"]) {
+            timeSlots.push_back(TimeSlot::deserializeFromJson(timeSlotJson));
+        }
+        m_courses.push_back(Course::deserializeFromJson(courseJson, timeSlots));
+    }
+
+    for (const auto& instructorJson : universityJson["m_instructors"]) {
+        std::vector<TimeSlot> availability;
+        for (const auto& timeSlotJson : instructorJson["m_availability"]) {
+            availability.push_back(TimeSlot::deserializeFromJson(timeSlotJson));
+        }
+        
+        std::vector<Course> preferredCourses;
+        for (const auto& courseJson : instructorJson["m_preferredCourses"]) {
+            std::vector<TimeSlot> timeSlots;
+            for (const auto& timeSlotJson : courseJson["m_preferredTimeSlots"]) {
+                timeSlots.push_back(TimeSlot::deserializeFromJson(timeSlotJson));
+            }
+            preferredCourses.push_back(Course::deserializeFromJson(courseJson, timeSlots));
+        }
+        m_instructors.push_back(Instructor::deserializeFromJson(instructorJson, availability, preferredCourses));
+    }
+    
+    for (const auto& timeSlotJson : universityJson["m_timeSlots"]) {
+        TimeSlot deserializedTimeSlot = TimeSlot::deserializeFromJson(timeSlotJson);
+        m_timeSlots.insert(deserializedTimeSlot);
+    }
+}
+
+#endif

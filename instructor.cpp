@@ -1,12 +1,16 @@
+#ifndef INSTRUCTOR_HPP
+#define INSTRUCTOR_HPP
+
 #include "instructor.hpp"
 #include <unordered_map>
 
 Instructor::Instructor(const std::string& name, const std::vector<TimeSlot>& availability, const std::vector<Course>& preferredCourses)
     : m_name{name}
     , m_availability{availability}
-    , m_preferredCourses{preferredCourses} 
-{
-    //stugel vor dubliatner chlini courseri
+    , m_preferredCourses{preferredCourses} {}
+
+bool Instructor::operator==(const Instructor& instructor) const {
+    return this->m_name == instructor.m_name;
 }
 
 void Instructor::displayInfo() const {
@@ -33,10 +37,6 @@ std::string Instructor::getName() const {
     return m_name;
 }
 
-void Instructor::setPreferredCourses(const std::vector<Course>& courses) {
-    m_preferredCourses = courses;
-}
-
 bool Instructor::isAvailable(const TimeSlot& timeSlot) const {
     for (const auto& slot : m_availability) {
         if (slot == timeSlot) {
@@ -55,18 +55,25 @@ bool Instructor::prefersCourse(const Course& course) const {
     return false;
 }
 
-std::vector<TimeSlot> Instructor::getAssignedTimeSlots() const {
-    return m_assignedTimeSlots;
+json Instructor::serializeToJson() const {
+    json courseJson;
+    for (const auto& course: m_preferredCourses) {
+        courseJson.push_back(course.serializeToJson());
+    }
+    json availabilityJson;
+    for (const auto& timeSlot: m_availability) {
+        availabilityJson.push_back(timeSlot.serializeToJson());
+    }
+    return {
+        {"m_name", m_name},
+        {"m_preferredCourses", courseJson},
+        {"m_availability", availabilityJson}
+    };
 }
 
-bool Instructor::operator==(const Instructor& instructor) const {
-    return this->m_name == instructor.m_name;
+Instructor Instructor::deserializeFromJson(const json& instructorJson, const std::vector<TimeSlot>& availability, const std::vector<Course>& preferredCourses) {
+    Instructor deserializedInstructor = Instructor(instructorJson["m_name"].get<std::string>(), availability, preferredCourses);
+    return deserializedInstructor;
 }
 
-void Instructor::pushTimeSlot(const TimeSlot& timeSlot) {
-    m_assignedTimeSlots.push_back(timeSlot);
-}
-
-void Instructor::popTimeSlot() {
-    m_assignedTimeSlots.pop_back();
-}
+#endif
