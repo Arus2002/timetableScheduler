@@ -88,6 +88,7 @@ bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timeta
 
     bool foundCompleteSchedule = false;
     Course& course = m_courses[courseIndex];
+    //In case if course can be scheduled with 2 softs
     for (const auto& timeSlot : course.getPreferredTimeSlots()) {
         for (auto& instructor : m_instructors) {
             if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
@@ -101,6 +102,7 @@ bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timeta
             }
         }
     }
+    //In case if course can be scheduled with only first soft
     if (!foundCompleteSchedule) {
         for (const auto& timeSlot : course.getPreferredTimeSlots()) {
             for (auto& instructor : m_instructors) {
@@ -117,6 +119,7 @@ bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timeta
             }
         }
     }
+    //In case if course can be scheduled with only second softs
     if (!foundCompleteSchedule) {
         for (const auto& timeSlot : commonTimeSlots) {
             for (auto& instructor : m_instructors) {
@@ -178,7 +181,7 @@ std::string University::saveState() const {
     }
     
     std::string filename;
-    std::cout << "Please input filenmae" << std::endl;
+    std::cout << "Please input filename!" << std::endl;
     std::cin >> filename;
     std::ofstream file(filename);
     file << universityJson.dump(4);

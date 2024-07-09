@@ -1,0 +1,193 @@
+{
+    "m_courses": [
+        {
+            "m_courseName": "Physics",
+            "m_preferredTimeSlots": [
+                {
+                    "m_day": "Monday",
+                    "m_endTime": "12:00",
+                    "m_startTime": "11:00"
+                }
+            ]
+        },
+        {
+            "m_courseName": "Chemistry",
+            "m_preferredTimeSlots": [
+                {
+                    "m_day": "Wednesday",
+                    "m_endTime": "10:00",
+                    "m_startTime": "09:00"
+                }
+            ]
+        },
+        {
+            "m_courseName": "Biology",
+            "m_preferredTimeSlots": [
+                {
+                    "m_day": "Wednesday",
+                    "m_endTime": "12:00",
+                    "m_startTime": "11:00"
+                }
+            ]
+        },
+        {
+            "m_courseName": "Math",
+            "m_preferredTimeSlots": [
+                {
+                    "m_day": "Monday",
+                    "m_endTime": "10:00",
+                    "m_startTime": "09:00"
+                }
+            ]
+        },
+        {
+            "m_courseName": "History",
+            "m_preferredTimeSlots": [
+                {
+                    "m_day": "Friday",
+                    "m_endTime": "13:00",
+                    "m_startTime": "12:00"
+                }
+            ]
+        }
+    ],
+    "m_instructors": [
+        {
+            "m_availability": [
+                {
+                    "m_day": "Monday",
+                    "m_endTime": "10:00",
+                    "m_startTime": "09:00"
+                }
+            ],
+            "m_name": "Alice",
+            "m_preferredCourses": [
+                {
+                    "m_courseName": "Math",
+                    "m_preferredTimeSlots": [
+                        {
+                            "m_day": "Monday",
+                            "m_endTime": "10:00",
+                            "m_startTime": "09:00"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "m_availability": [
+                {
+                    "m_day": "Monday",
+                    "m_endTime": "12:00",
+                    "m_startTime": "11:00"
+                }
+            ],
+            "m_name": "Bob",
+            "m_preferredCourses": [
+                {
+                    "m_courseName": "Physics",
+                    "m_preferredTimeSlots": [
+                        {
+                            "m_day": "Monday",
+                            "m_endTime": "12:00",
+                            "m_startTime": "11:00"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "m_availability": [
+                {
+                    "m_day": "Wednesday",
+                    "m_endTime": "10:00",
+                    "m_startTime": "09:00"
+                }
+            ],
+            "m_name": "Carol",
+            "m_preferredCourses": [
+                {
+                    "m_courseName": "Chemistry",
+                    "m_preferredTimeSlots": [
+                        {
+                            "m_day": "Wednesday",
+                            "m_endTime": "10:00",
+                            "m_startTime": "09:00"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "m_availability": [
+                {
+                    "m_day": "Wednesday",
+                    "m_endTime": "12:00",
+                    "m_startTime": "11:00"
+                }
+            ],
+            "m_name": "Ani",
+            "m_preferredCourses": [
+                {
+                    "m_courseName": "Biology",
+                    "m_preferredTimeSlots": [
+                        {
+                            "m_day": "Wednesday",
+                            "m_endTime": "12:00",
+                            "m_startTime": "11:00"
+                        }
+                    ]
+                }
+            ]
+        },
+        {
+            "m_availability": [
+                {
+                    "m_day": "Friday",
+                    "m_endTime": "13:00",
+                    "m_startTime": "12:00"
+                }
+            ],
+            "m_name": "Aram",
+            "m_preferredCourses": [
+                {
+                    "m_courseName": "History",
+                    "m_preferredTimeSlots": [
+                        {
+                            "m_day": "Friday",
+                            "m_endTime": "13:00",
+                            "m_startTime": "12:00"
+                        }
+                    ]
+                }
+            ]
+        }
+    ],
+    "m_timeSlots": [
+        {
+            "m_day": "Friday",
+            "m_endTime": "13:00",
+            "m_startTime": "12:00"
+        },
+        {
+            "m_day": "Monday",
+            "m_endTime": "10:00",
+            "m_startTime": "09:00"
+        },
+        {
+            "m_day": "Wednesday",
+            "m_endTime": "12:00",
+            "m_startTime": "11:00"
+        },
+        {
+            "m_day": "Monday",
+            "m_endTime": "12:00",
+            "m_startTime": "11:00"
+        },
+        {
+            "m_day": "Wednesday",
+            "m_endTime": "10:00",
+            "m_startTime": "09:00"
+        }
+    ]
+}
