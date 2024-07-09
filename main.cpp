@@ -14,7 +14,7 @@ int main() {
     Course course5("History", {timeSlot3});
 
     Instructor instructor1("Alice", {timeSlot1, timeSlot2, timeSlot3}, {course1, course2});
-    Instructor instructor2("Bob", {timeSlot1, timeSlot2, timeSlot4}, {course2, course3});
+    Instructor instructor2("Bob", {timeSlot1, timeSlot2, timeSlot4}, {course2, course3, course5});
     Instructor instructor3("Carol", {timeSlot3, timeSlot4}, {course4});
 
     University university;
@@ -30,17 +30,18 @@ int main() {
     university.addTimeSlot(timeSlot2);
     university.addTimeSlot(timeSlot3);
     university.addTimeSlot(timeSlot4);
+    university.addTimeSlot(timeSlot5);
     
     std::unordered_map<Course, std::pair<TimeSlot, Instructor>, decltype(CourseHash()), decltype(CourseEqual())> timetable = university.schedule();
     if (!timetable.empty()) {
-            std::cout << "Schedule created successfully!" << std::endl;
+            std::cout << "Created successfully!" << std::endl;
             for (const auto& entry : timetable) {
                 std::cout << entry.first.getName() << " scheduled with " << entry.second.second.getName() 
                         << " on " << entry.second.first.getDay() << " from " << entry.second.first.getStartTime() 
                         << " to " << entry.second.first.getEndTime() << std::endl;
             }
         } else {
-            std::cout << "Failed to create a schedule." << std::endl;
+            std::cout << "Failed!" << std::endl;
         }
 
 

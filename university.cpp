@@ -125,11 +125,18 @@ std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(Time
     return commonTimeSlots;
 }
 
+void University::optimizeCourses() {
+    std::sort(m_courses.begin(), m_courses.end(), [](const Course& c1, const Course& c2) {
+        return c1.getPreferredTimeSlots().size() < c2.getPreferredTimeSlots().size();});
+}
+
 unordered_map_timetable University::schedule() {
     std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> commonTimeSlots = getIntersection();
     unordered_map_timetable tmpTimetable;
     unordered_map_timetable timetable;
-    backtrackScheduleFor2Softs(0, tmpTimetable, timetable);
+    std::size_t index = 0;
+    optimizeCourses();
+    backtrackSchedule(index , tmpTimetable, timetable, commonTimeSlots);
 
     bool returnFlag = false;
     for (const auto& item1: timetable) {
@@ -163,12 +170,12 @@ unordered_map_timetable University::schedule() {
     return timetable;
 }
 
-bool University::backtrackScheduleFor2Softs(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable) {
+bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable, const std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())>& commonTimeSlots) {
     if (courseIndex == m_courses.size()) {
         if (tmpTimetable.size() > timetable.size()) {
             timetable = tmpTimetable;
         }
-        return timetable.size() == tmpTimetable.size(); // All courses are scheduled
+        return timetable.size() == tmpTimetable.size();
     }
 
     bool foundCompleteSchedule = false;
@@ -178,7 +185,7 @@ bool University::backtrackScheduleFor2Softs(int courseIndex, unordered_map_timet
             if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
                 assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
 
-                if (backtrackScheduleFor2Softs(courseIndex + 1, tmpTimetable, timetable)) {
+                if (backtrackSchedule(courseIndex + 1, tmpTimetable, timetable, commonTimeSlots)) {
                     foundCompleteSchedule = true;
                 }
 
@@ -186,29 +193,33 @@ bool University::backtrackScheduleFor2Softs(int courseIndex, unordered_map_timet
             }
         }
     }
-    for (const auto& timeSlot : course.getPreferredTimeSlots()) {
-        for (auto& instructor : m_instructors) {
-            if (instructor.isAvailable(timeSlot) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
-                assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+    if (!foundCompleteSchedule) {
+        for (const auto& timeSlot : course.getPreferredTimeSlots()) {
+            for (auto& instructor : m_instructors) {
+                if (instructor.isAvailable(timeSlot) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
+                    assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
 
-                if (backtrackScheduleFor2Softs(courseIndex + 1, tmpTimetable, timetable)) {
-                    foundCompleteSchedule = true;
+                    if (backtrackSchedule(courseIndex + 1, tmpTimetable, timetable, commonTimeSlots)) {
+                        foundCompleteSchedule = true;
+                    }
+
+                    unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
                 }
-
-                unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
             }
         }
     }
-    for (const auto& timeSlot : m_timeSlots) {
-        for (auto& instructor : m_instructors) {
-            if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot) && m_timeSlots.find(timeSlot) != m_timeSlots.end()) {
-                assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
+    if (!foundCompleteSchedule) {
+        for (const auto& timeSlot : commonTimeSlots) {
+            for (auto& instructor : m_instructors) {
+                if (instructor.isAvailable(timeSlot.first) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot.first)) {
+                    assignCourseToInstructor(course, instructor, timeSlot.first, tmpTimetable);
 
-                if (backtrackScheduleFor2Softs(courseIndex + 1, tmpTimetable, timetable)) {
-                    foundCompleteSchedule = true;
+                    if (backtrackSchedule(courseIndex + 1, tmpTimetable, timetable, commonTimeSlots)) {
+                        foundCompleteSchedule = true;
+                    }
+
+                    unassignCourseFromInstructor(course, instructor, timeSlot.first, tmpTimetable);
                 }
-
-                unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
             }
         }
     }
@@ -217,70 +228,8 @@ bool University::backtrackScheduleFor2Softs(int courseIndex, unordered_map_timet
         timetable = tmpTimetable;
     }
 
-    return foundCompleteSchedule; // No valid schedule found
+    return foundCompleteSchedule;
 }
-
-// bool University::backtrackScheduleForCoursePreferred(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable, std::vector<Instructor>& instructors2) {
-//     if (courseIndex == m_courses.size()) {
-//         if (tmpTimetable.size() > timetable.size()) {
-//             timetable = tmpTimetable;
-//         }
-//         return timetable.size() == tmpTimetable.size(); // All courses are scheduled
-//     }
-
-//     bool foundCompleteSchedule = false;
-//     Course& course = m_courses[courseIndex];
-//     for (const auto& timeSlot : course.getPreferredTimeSlots()) {
-//         for (auto& instructor : instructors2) {
-//             if (instructor.isAvailable(timeSlot) && !isTimeSlotAssigned(timeSlot)) {
-//                 assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
-
-//                 if (backtrackScheduleForCoursePreferred(courseIndex + 1, tmpTimetable, timetable, instructors2)) {
-//                     foundCompleteSchedule = true;
-//                 }
-
-//                 unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
-//             }
-//         }
-//     }
-
-//     if (tmpTimetable.size() > timetable.size()) {
-//         timetable = tmpTimetable;
-//     }
-
-//     return foundCompleteSchedule; // No valid schedule found
-// }
-
-// bool University::backtrackScheduleForInstructorPreferred(int courseIndex, unordered_map_timetable& tmpTimetable, unordered_map_timetable& timetable, std::vector<Instructor>& instructors3, std::unordered_map<TimeSlot, Instructor, decltype(TimeSlotHash()), decltype(TimeSlotEqual())>& commonTimeSlots) {
-//     if (courseIndex == m_courses.size()) {
-//         if (tmpTimetable.size() > timetable.size()) {
-//             timetable = tmpTimetable;
-//         }
-//         return timetable.size() == tmpTimetable.size(); // All courses are scheduled
-//     }
-
-//     bool foundCompleteSchedule = false;
-//     Course& course = m_courses[courseIndex];
-//     for (const auto& timeSlot : course.getPreferredTimeSlots()) {
-//         for (auto& instructor : instructors3) {
-//             if (instructor.isAvailable(timeSlot) && instructor.prefersCourse(course) && !isTimeSlotAssigned(timeSlot)) {
-//                 assignCourseToInstructor(course, instructor, timeSlot, tmpTimetable);
-
-//                 if (backtrackScheduleForInstructorPreferred(courseIndex + 1, tmpTimetable, timetable, instructors3, commonTimeSlots)) {
-//                     foundCompleteSchedule = true;
-//                 }
-
-//                 unassignCourseFromInstructor(course, instructor, timeSlot, tmpTimetable);
-//             }
-//         }
-//     }
-
-//     if (tmpTimetable.size() > timetable.size()) {
-//         timetable = tmpTimetable;
-//     }
-
-//     return foundCompleteSchedule; // No valid schedule found
-// }
 
 void University::assignCourseToInstructor(Course& course, Instructor& instructor, const TimeSlot& timeSlot, unordered_map_timetable& timetable) {
     instructor.pushTimeSlot(timeSlot);
