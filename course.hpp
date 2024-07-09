@@ -1,3 +1,6 @@
+#ifndef COURSE_HPP
+#define COURSE_HPP
+
 #include "timeSlot.hpp"
 #include <vector>
 
@@ -27,3 +30,5 @@ struct CourseHash {
 struct CourseEqual {
     bool operator()(const Course& lhs, const Course& rhs) const;
 };
+
+#endif

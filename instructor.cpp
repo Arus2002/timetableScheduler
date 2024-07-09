@@ -1,6 +1,3 @@
-#ifndef INSTRUCTOR_HPP
-#define INSTRUCTOR_HPP
-
 #include "instructor.hpp"
 #include <unordered_map>
 
@@ -75,5 +72,3 @@ Instructor Instructor::deserializeFromJson(const json& instructorJson, const std
     Instructor deserializedInstructor = Instructor(instructorJson["m_name"].get<std::string>(), availability, preferredCourses);
     return deserializedInstructor;
 }
-
-#endif

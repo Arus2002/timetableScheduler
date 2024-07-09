@@ -1,6 +1,3 @@
-#ifndef COURSE_HPP
-#define COURSE_HPP
-
 #include "course.hpp"
 
 std::size_t CourseHash::operator()(const Course& course) const {
@@ -52,5 +49,3 @@ Course Course::deserializeFromJson(const json& courseJson, const std::vector<Tim
     Course deserializedCourse = Course(courseJson.at("m_courseName").get<std::string>(), timeSlots);
     return deserializedCourse;
 }
-
-#endif

@@ -1,5 +1,3 @@
-#ifndef TIMWSLOT_HPP
-#define TIMESLOT_HPP
 #include "timeSlot.hpp"
 #include <unordered_map>
 
@@ -117,5 +115,3 @@ TimeSlot TimeSlot::deserializeFromJson(const json& timeSlotJson) {
         timeSlotJson.at("m_endTime").get<std::string>());
     return deserializedTimeSlot;
 }
-
-#endif

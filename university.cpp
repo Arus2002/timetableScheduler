@@ -1,6 +1,3 @@
-#ifndef UNIVERSITY_HPP
-#define UNIVERSITY_HPP
-
 #include "university.hpp"
 #include <algorithm>
 #include <fstream>
@@ -228,5 +225,3 @@ void University::loadState(const std::string& filename) {
         m_timeSlots.insert(deserializedTimeSlot);
     }
 }
-
-#endif

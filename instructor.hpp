@@ -1,3 +1,6 @@
+#ifndef INSTRUCTOR_HPP
+#define INSTRUCTOR_HPP
+
 #include "course.hpp"
 
 class Instructor {
@@ -22,3 +25,5 @@ private:
     std::vector<TimeSlot> m_availability;
     std::vector<Course> m_preferredCourses;
 };
+
+#endif

@@ -1,3 +1,6 @@
+#ifndef UNIVERSITY_HPP
+#define UNIVERSITY_HPP
+
 #include "instructor.hpp"
 #include <unordered_map>
 #include <unordered_set>
@@ -31,3 +34,5 @@ private:
     std::vector<Instructor> m_instructors;
     std::unordered_set<TimeSlot, decltype(TimeSlotHash()), decltype(TimeSlotEqual())> m_assignedTimeSlots;
 };
+
+#endif

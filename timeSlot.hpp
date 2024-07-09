@@ -1,3 +1,6 @@
+#ifndef TIMESLOT_HPP
+#define TIMESLOT_HPP
+
 #include <iostream>
 #include <string>
 #include "dependencies/single_include/nlohmann/json.hpp"
@@ -35,3 +38,5 @@ struct TimeSlotHash {
 struct TimeSlotEqual {
     bool operator()(const TimeSlot& lhs, const TimeSlot& rhs) const;
 };
+
+#endif
