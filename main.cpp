@@ -4,7 +4,7 @@ int main() {
     University university;
 
     //Tests in json files
-    university.loadState("test_1");
+    //university.loadState("test_1");
     // university.loadState("test_2");
     // university.loadState("test_3");
     // university.loadState("test_4");
@@ -12,7 +12,7 @@ int main() {
     // university.loadState("test_6");
     // university.loadState("test_7");
     // university.loadState("test_8");
-    // university.loadState("test_9");
+    university.loadState("test_9");
 
     std::unordered_map<Course, std::pair<TimeSlot, Instructor>, decltype(CourseHash()), decltype(CourseEqual())> timetable = university.schedule();
     if (!timetable.empty()) {

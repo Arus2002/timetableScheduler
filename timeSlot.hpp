@@ -23,9 +23,6 @@ public: //json functions
     static TimeSlot deserializeFromJson(const json& timeSlotJson);
 
 private:
-    void timeSlotChecker() const;
-
-private:
     std::string m_day;
     std::string m_startTime;
     std::string m_endTime;
