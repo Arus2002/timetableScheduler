@@ -6,7 +6,7 @@ std::size_t CourseHash::operator()(const Course& course) const {
 }
 
 bool CourseEqual::operator()(const Course& lhs, const Course& rhs) const {
-    return lhs.getName() == rhs.getName();
+    return lhs == rhs;
 }
 
 Course::Course(const std::string& courseName, const std::vector<TimeSlot>& preferrredTimeSlots)
