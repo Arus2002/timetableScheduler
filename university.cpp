@@ -135,6 +135,11 @@ bool University::backtrackSchedule(std::size_t courseIndex, unordered_map_timeta
             }
         }
     }
+    if (!foundCompleteSchedule) {
+        if (backtrackSchedule(courseIndex + 1, tmpTimetable, timetable, commonTimeSlots)) {
+            foundCompleteSchedule = true;
+        }
+    }
 
     if (tmpTimetable.size() > timetable.size()) {
         timetable = tmpTimetable;
