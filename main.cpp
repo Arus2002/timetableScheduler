@@ -2,15 +2,15 @@
 
 int main() {
     University university;
-    university.loadState("test_1");
-    //university.loadState("test_2");
-    //university.loadState("test_3");
-    //university.loadState("test_4");
-    //university.loadState("test_5");
-    //university.loadState("test_6");
-    //university.loadState("test_7");
-    //university.loadState("test_8");
-    //university.loadState("test_9");
+    university.loadState("tests/test_1");
+    //university.loadState("tests/test_2");
+    //university.loadState("tests/test_3");
+    //university.loadState("tests/test_4");
+    //university.loadState("tests/test_5");
+    //university.loadState("tests/test_6");
+    //university.loadState("tests/test_7");
+    //university.loadState("tests/test_8");
+    //university.loadState("tests/test_9");
 
     std::unordered_map<Course, std::pair<TimeSlot, Instructor>, decltype(CourseHash()), decltype(CourseEqual())> timetable = university.schedule();
     if (!timetable.empty()) {
