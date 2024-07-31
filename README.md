@@ -35,20 +35,23 @@ git clone https://github.com/Arus2002/timetableScheduler
 # Navigate to the project directory
 cd timetableScheduler
 
-# Compile all C++ files
-g++ *.cpp -o main
+# Create directory for build
+mkdir build
+cd build
+
+# Configure the project
+cmake ..
+
+# Build the project
+cmake --build .
+
+It will create executable file #UniversityTimetableSystem
 
 # Usage
-After compiling the project, you can run the executable to start the scheduling process: 
-./main
+Now, you can run the executable to start the scheduling process: 
+./UniversityTimetableSystem
 
 ## Testing
 # Open main.cpp and uncomment the desired test lines 
-
-# Recompile the program
-g++ *.cpp -o main
-
-# Run the program
-./main
 
 Project Link: https://github.com/Arus2002/timetableScheduler
