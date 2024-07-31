@@ -45,7 +45,7 @@ cmake ..
 # Build the project
 cmake --build .
 
-It will create executable file #UniversityTimetableSystem
+It will create executable file: UniversityTimetableSystem
 
 # Usage
 Now, you can run the executable to start the scheduling process: 
